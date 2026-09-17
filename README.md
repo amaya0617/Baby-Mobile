@@ -101,7 +101,7 @@ The system uses a real-time state-based approach to dynamically switch between b
 ## Project Structure
 
 ```text
-baby_ai/
+Baby-Mobile/
 │
 ├── src/
 │   ├── main.py
@@ -126,9 +126,9 @@ baby_ai/
 
 ---
 
-## System Setup
+# System Setup
 
-### Supported Platform
+## Supported Platform
 
 The system is designed and tested on:
 
@@ -137,7 +137,7 @@ The system is designed and tested on:
 * **Debian Bookworm Version 12**
 * **Python 3.11**
 
-Python 3.11 is used to provide better compatibility with the MediaPipe-based computer vision components of the system.
+Python 3.11 is used to provide compatibility with the MediaPipe-based computer vision components of the system.
 
 ---
 
@@ -187,6 +187,8 @@ Python 3.11.x
 
 ## 3. Upgrade Python Package Tools
 
+Upgrade pip and the supporting package tools:
+
 ```bash
 pip install --upgrade pip setuptools wheel
 ```
@@ -195,11 +197,51 @@ pip install --upgrade pip setuptools wheel
 
 ## 4. Install Python Dependencies
 
-Install the packages listed in `requirements.txt`:
+The project uses a specific installation order because OpenCV, MediaPipe, NumPy, and their dependencies can cause version conflicts on the Raspberry Pi environment.
+
+First install the required NumPy version:
 
 ```bash
-pip install -r requirements.txt
+pip install numpy==1.26.4
 ```
+
+Install OpenCV without automatically installing or changing its dependencies:
+
+```bash
+pip install opencv-python==4.8.1.78 --no-deps
+```
+
+Install MediaPipe without automatically installing or changing its dependencies:
+
+```bash
+pip install mediapipe==0.10.15 --no-deps
+```
+
+Install the required supporting packages:
+
+```bash
+pip install absl-py attrs flatbuffers protobuf==4.25.8 pillow packaging python-dateutil pyparsing six contourpy cycler fonttools kiwisolver scipy matplotlib
+```
+
+Install the audio packages:
+
+```bash
+pip install sounddevice==0.5.3 simpleaudio==1.0.4
+```
+
+Install TensorFlow Lite Runtime:
+
+```bash
+pip install tflite-runtime==2.14.0
+```
+
+### About `requirements.txt`
+
+The `requirements.txt` file contains the Python packages required by the project.
+
+It can be used to view the required dependencies, but the installation commands above are recommended for this project because OpenCV and MediaPipe are intentionally installed using `--no-deps` to avoid dependency conflicts.
+
+Do not add `--no-deps` to `requirements.txt`. It is a pip installation option and belongs in the installation commands.
 
 ---
 
@@ -217,7 +259,7 @@ Update the Raspberry Pi package list:
 sudo apt update
 ```
 
-Install the required system packages:
+Install the required system package:
 
 ```bash
 sudo apt install -y libasound2-dev
@@ -301,25 +343,23 @@ The audio files should be:
 
 ---
 
-## 9. Booting Up the System
+## 9. Run the System
 
 Open the Raspberry Pi terminal.
 
 Navigate to the project directory:
 
 ```bash
-cd ~/Desktop/baby_ai
+cd ~/Baby-Mobile
 ```
 
-> **Note:** The above path is an example. Use the actual path where the project is located on your Raspberry Pi.
+If the repository was cloned into another location, use the actual project path.
 
 Activate the virtual environment:
 
 ```bash
 source baby_venv/bin/activate
 ```
-
-If you used a different virtual environment name, replace `baby_venv` with your environment name.
 
 Run the main program:
 
@@ -375,6 +415,6 @@ The overall system follows this general process:
 * Ensure the required `.tflite` models are inside the `models` directory.
 * Ensure all required `.wav` files are inside the `audio` directory.
 * Activate the virtual environment before running the application.
-* The project is intended to run on the specified Raspberry Pi OS and Python environment.
-
-
+* Use the specified Python and Raspberry Pi OS environment for better compatibility.
+* Do not remove the `--no-deps` option from the OpenCV and MediaPipe installation commands unless the dependency configuration is intentionally changed and tested.
+* The system should be tested with the required hardware connected before running the complete application.
